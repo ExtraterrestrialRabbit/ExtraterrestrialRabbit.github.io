@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Важная система</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            text-shadow: 0 0 15px #0f0;
+            animation: blink 1s infinite;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            color: #ff0;
+        }
+        
+        p {
+            font-size: 2rem;
+            margin: 15px 0;
+            max-width: 90%;
+        }
+        
+        .blink {
+            animation: blink 0.7s infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0.3; }
+        }
+        
+        .glitch {
+            position: relative;
+            animation: glitch 5s infinite;
+        }
+        
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-5px, 5px); }
+            40% { transform: translate(-5px, -5px); }
+            60% { transform: translate(5px, 5px); }
+            80% { transform: translate(5px, -5px); }
+            100% { transform: translate(0); }
+        }
+        
+        .progress-bar {
+            width: 80%;
+            height: 40px;
+            background: #222;
+            border: 2px solid #0f0;
+            border-radius: 5px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            width: 0%;
+            background: #0f0;
+            animation: progress 10s linear;
+        }
+        
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        .button {
+            margin-top: 30px;
+            padding: 15px 40px;
+            font-size: 1.8rem;
+            background: #300;
+            color: #f00;
+            border: 2px solid #f00;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: none; /* Убираем анимацию */
+            position: absolute;
+            bottom: 50px; /* Первоначальное положение снизу */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .button:hover {
+            background: #f00;
+            color: #000;
+            box-shadow: 0 0 20px #f00;
+        }
+        
+        .message {
+            display: none;
+            margin-top: 40px;
+            font-size: 2.5rem;
+            color: #0ff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .scary-face {
+            display: none;
+            font-size: 10rem;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .final-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            color: #ff0;
+            text-shadow: 0 0 20px #ff0;
+            animation: color-change 3s infinite;
+            display: none;
+            z-index: 1000;
+        }
+        
+        @keyframes color-change {
+            0% { color: #ff0; }
+            25% { color: #0f0; }
+            50% { color: #0ff; }
+            75% { color: #f0f; }
+            100% { color: #ff0; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <h1 class="blink">ВНИМАНИЕ! ОБНАРУЖЕН ВИРУС!</h1>
+    <h2 class="glitch">ВАША СИСТЕМА ВЗЛОМАНА</h2>
+    
+    <p>Обнаружено вторжение через порт 0xDEADBEEF</p>
+    <p>Ваши файлы шифруются...</p>
+    <p>Перехват и консервация паролей...</p>
+    
+    <div class="progress-bar">
+        <div class="progress"></div>
+    </div>
+    
+    <p>Уничтожение и герметизация данных начнется через: <span id="timer">10</span> секунд</p>
+    
+    <button id="virus-button" class="button">ОСТАНОВИТЬ ВИРУС</button>
+    
+    <div id="scary-face" class="scary-face"> </div>
+    
+    <div id="message" class="message">
+        ШУТКА! Ваш компьютер в безопасности! 😊<br>
+        Надеюсь, ты не слишком испугался!
+    </div>
+    
+    <div id="final-message" class="final-message">
+        Ладно, пошутил :D
+    </div>
+
+    <script>
+        // Таймер
+        let timeLeft = 10;
+        const timerElement = document.getElementById('timer');
+        const button = document.getElementById('virus-button');
+        const finalMessage = document.getElementById('final-message');
+        const content = document.querySelector('body > :not(#canvas):not(#final-message)');
+        
+        // Функция для перемещения кнопки в случайное место
+function moveButton() {
+    const buttonWidth = button.offsetWidth;
+    const buttonHeight = button.offsetHeight;
+    
+    const maxX = window.innerWidth - buttonWidth;
+    const maxY = window.innerHeight - buttonHeight;
+    
+    // Генерируем случайные координаты
+    const randomX = Math.floor(Math.random() * maxX);
+    const randomY = Math.floor(Math.random() * maxY);
+    
+    // Мгновенно перемещаем кнопку
+    button.style.left = `${randomX}px`;
+    button.style.top = `${randomY}px`;
+    button.style.transform = 'none'; // Убираем transform
+    button.style.bottom = 'auto'; // Сбрасываем bottom
+}
+        
+        // Мгновенно перемещаем кнопку при клике
+        button.addEventListener('click', moveButton);
+        
+        const timer = setInterval(() => {
+            timeLeft--;
+            timerElement.textContent = timeLeft;
+            
+            if (timeLeft <= 5) {
+                timerElement.style.color = '#f00';
+                document.getElementById('scary-face').style.display = 'block';
+            }
+            
+            if (timeLeft <= 0) {
+                clearInterval(timer);
+                
+                // Убираем весь контент, кроме canvas и финального сообщения
+                const elementsToRemove = document.querySelectorAll('body > :not(#canvas):not(#final-message)');
+                elementsToRemove.forEach(el => el.style.display = 'none');
+                
+                // Показываем финальное сообщение
+                finalMessage.style.display = 'block';
+            }
+        }, 1000);
+
+        // Matrix-rain эффект
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const letters = '01010101010101010101010101010101010101';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0F0';
+            ctx.font = `${fontSize}px monospace`;
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+            requestAnimationFrame(draw);
+        }
+        draw();
+        
+        // Случайные всплывающие сообщения
+        const messages = [
+            "Обнаружены ваши пароли!",
+            "Доступ к камере получен!",
+            "Перехват банковских данных...",
+            "Ваша история просмотров анализируется",
+            "Кошельки взламываются",
+            "Отправка личных данных на сервер..."
+        ];
+        
+        setInterval(() => {
+            if (timeLeft > 0) {
+                const message = messages[Math.floor(Math.random() * messages.length)];
+                const p = document.createElement('p');
+                p.textContent = message;
+                p.className = 'blink';
+                p.style.color = '#' + Math.floor(Math.random() * 16777215).toString(16);
+                document.body.appendChild(p);
+                
+                setTimeout(() => {
+                    p.remove();
+                }, 2000);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
