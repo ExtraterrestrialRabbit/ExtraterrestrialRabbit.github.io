@@ -4,6 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Страница</title>
+    <style>
+        /* Самый простой CSS для визуализации областей */
+        area {
+            cursor: pointer;
+            outline: 2px solid red;
+        }
+        
+        /* Дополнительные стили для наглядности */
+        img[usemap] {
+            border: 1px solid #ccc;
+        }
+        
+        li {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Задание 1</h1>
@@ -26,7 +42,7 @@
         <li><a href="https://ru.wikipedia.org/wiki/HTML#Версии">Ссылка на фрагмент страницы стороннего сайта</a></li>
         <li>
             Ссылки из прямоугольных и круглых областей картинки:<br>
-            <img src="image2.jpg" alt="image" usemap="#examplemap" width="600" height="400">
+            <img src="image.webp" alt="image" usemap="#examplemap" width="600" height="400">
             <map name="examplemap">
                 <area shape="rect" coords="0,0,300,400" href="https://kubsu.ru/" alt="Прямоугольная область">
                 <area shape="circle" coords="450,200,100" href="https://kubsu.ru/en" alt="Круглая область">
@@ -103,3 +119,4 @@
 </body>
 
 </html>
+
